@@ -1,0 +1,49 @@
+# Teletext viewer for the M5Stack Tab5 (ESP32-P4), ESP-IDF 6.0.
+CONFIG_IDF_TARGET="esp32p4"
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+
+CONFIG_SPIRAM=y
+# SPIRAM_SPEED_200M depends on IDF_EXPERIMENTAL_FEATURES, which must be set first
+# or Kconfig silently falls back to 20MHz and the MIPI DSI panel underruns.
+CONFIG_IDF_EXPERIMENTAL_FEATURES=y
+CONFIG_SPIRAM_SPEED_200M=y
+CONFIG_SPIRAM_XIP_FROM_PSRAM=y
+# Large malloc() calls (WebP decode, page buffers, downloaded pictures) go to PSRAM.
+CONFIG_SPIRAM_USE_MALLOC=y
+CONFIG_CACHE_L2_CACHE_256KB=y
+CONFIG_CACHE_L2_CACHE_LINE_128B=y
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+# IDF 6.0 defaults to rev v3.1 and hides the <3.0 revisions behind this toggle;
+# without it the Tab5's rev v1.x P4 is rejected by the bootloader image check.
+CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y
+CONFIG_ESP32P4_REV_MIN_100=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_360=y
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+
+# LVGL allocates through malloc (PSRAM for large blocks) instead of its fixed 64 KB heap.
+CONFIG_LV_USE_CLIB_MALLOC=y
+CONFIG_LV_USE_BUTTONMATRIX=y
+
+# Fonts: 28 px default, 40 px keypad, 48 px status line.
+# CONFIG_LV_FONT_MONTSERRAT_14 is not set
+CONFIG_LV_FONT_MONTSERRAT_28=y
+CONFIG_LV_FONT_MONTSERRAT_40=y
+CONFIG_LV_FONT_MONTSERRAT_48=y
+CONFIG_LV_FONT_DEFAULT_MONTSERRAT_28=y
+
+# Wi-Fi through the Tab5's ESP32-C6: esp_hosted over SDIO with the Tab5 pin preset
+# (CLK 12, CMD 13, D0-D3 11/10/9/8, C6 reset 15).
+CONFIG_ESP32P4_TAB5_C6_BOARD=y
+# The C6 is powered through the IO expander, so teletext_wifi.c powers it first and then
+# calls esp_hosted_init() itself instead of the automatic init before app_main().
+# CONFIG_ESP_HOSTED_AUTO_CALL_INIT_BEFORE_APP_MAIN is not set
+# TLS buffers in PSRAM, to keep internal RAM for the display and SDIO.
+CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y
+
+# Wi-Fi credentials: put them in sdkconfig.defaults.local (not shared), for example
+#   CONFIG_TELETEXT_WIFI_SSID="my-network"
+#   CONFIG_TELETEXT_WIFI_PASSWORD="my-password"

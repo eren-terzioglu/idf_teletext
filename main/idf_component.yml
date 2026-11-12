@@ -1,0 +1,14 @@
+## IDF Component Manager Manifest File
+dependencies:
+  idf:
+    version: '>=6.0'
+  # Tab5 board support: display power, MIPI DSI panel, touch, LVGL port (LVGL 9).
+  espressif/m5stack_tab5: ^1.2.0
+  # Tab5 boards fitted with an ST7121 panel are not covered by the BSP above.
+  espressif/esp_lcd_st7121: ^1.0.1
+  # Wi-Fi: the ESP32-P4 has no radio; the Tab5's ESP32-C6 provides Wi-Fi over SDIO.
+  # esp_wifi_remote keeps the normal esp_wifi_* API, esp_hosted is the SDIO transport.
+  espressif/esp_wifi_remote: ^1.6
+  espressif/esp_hosted: ^3.1
+  # Parses the teletext page index (JSON) downloaded on the device.
+  espressif/cjson: ^1.7.19

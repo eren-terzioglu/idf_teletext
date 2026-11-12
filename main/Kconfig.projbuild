@@ -1,0 +1,39 @@
+menu "Teletext"
+
+    config TELETEXT_WIFI_SSID
+        string "Wi-Fi network name (SSID)"
+        default ""
+        help
+            Network the Tab5 downloads the pages over. With an empty SSID only the pages saved
+            on the device by an earlier download are shown. Put the credentials in
+            sdkconfig.defaults.local (not shared) or set them with idf.py menuconfig.
+
+    config TELETEXT_WIFI_PASSWORD
+        string "Wi-Fi password"
+        default ""
+        help
+            Empty for an open network.
+
+    config TELETEXT_API_URL
+        string "Teletext API base URL"
+        default "https://api-teletext.ceskatelevize.cz/pages"
+        help
+            The index is fetched from this URL; each picture from
+            <URL>/<page><subpage letter>/image.webp.
+
+    config TELETEXT_REFRESH_MINUTES
+        int "Download again every N minutes (0 = only after boot)"
+        range 0 1440
+        default 30
+        help
+            Every successful download is also saved to flash (about 1.7 MB).
+
+    config TELETEXT_MIN_SUCCESS_PERCENT
+        int "Minimum share of pictures that must download (%)"
+        range 1 100
+        default 95
+        help
+            A download with fewer fresh pictures is discarded and the current pages stay.
+            Single pictures that failed keep their previous version.
+
+endmenu
